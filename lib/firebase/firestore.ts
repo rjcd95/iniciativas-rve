@@ -23,7 +23,8 @@ export const getInitiatives = async (filters?: {
   if (!db) {
     throw new Error("Firestore no está inicializado");
   }
-  let q = query(collection(db, "initiatives"), orderBy("createdAt", "desc"));
+  const firestore = db; // Type guard for TypeScript
+  let q = query(collection(firestore, "initiatives"), orderBy("createdAt", "desc"));
 
   if (filters?.status) {
     q = query(q, where("status", "==", filters.status));
@@ -46,7 +47,8 @@ export const getInitiative = async (id: string): Promise<Initiative | null> => {
   if (!db) {
     throw new Error("Firestore no está inicializado");
   }
-  const docRef = doc(db, "initiatives", id);
+  const firestore = db;
+  const docRef = doc(firestore, "initiatives", id);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
@@ -67,7 +69,8 @@ export const createInitiative = async (
   if (!db) {
     throw new Error("Firestore no está inicializado");
   }
-  const docRef = await addDoc(collection(db, "initiatives"), {
+  const firestore = db;
+  const docRef = await addDoc(collection(firestore, "initiatives"), {
     ...initiative,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -82,7 +85,8 @@ export const updateInitiative = async (
   if (!db) {
     throw new Error("Firestore no está inicializado");
   }
-  const docRef = doc(db, "initiatives", id);
+  const firestore = db;
+  const docRef = doc(firestore, "initiatives", id);
   await updateDoc(docRef, {
     ...updates,
     updatedAt: serverTimestamp(),
@@ -93,7 +97,8 @@ export const deleteInitiative = async (id: string): Promise<void> => {
   if (!db) {
     throw new Error("Firestore no está inicializado");
   }
-  await deleteDoc(doc(db, "initiatives", id));
+  const firestore = db;
+  await deleteDoc(doc(firestore, "initiatives", id));
 };
 
 // Contributions
@@ -104,9 +109,10 @@ export const getContributions = async (
     throw new Error("Firestore no está inicializado");
   }
 
+  const firestore = db;
   try {
     const q = query(
-      collection(db, "contributions"),
+      collection(firestore, "contributions"),
       where("initiativeId", "==", initiativeId),
       orderBy("createdAt", "desc")
     );
@@ -123,7 +129,7 @@ export const getContributions = async (
     if (error.code === "failed-precondition" || error.message?.includes("index")) {
       console.warn("Índice no encontrado, obteniendo aportes sin ordenar:", error);
       const q = query(
-        collection(db, "contributions"),
+        collection(firestore, "contributions"),
         where("initiativeId", "==", initiativeId)
       );
       const snapshot = await getDocs(q);
@@ -147,8 +153,9 @@ export const getUserContribution = async (
   if (!db) {
     throw new Error("Firestore no está inicializado");
   }
+  const firestore = db;
   const q = query(
-    collection(db, "contributions"),
+    collection(firestore, "contributions"),
     where("initiativeId", "==", initiativeId),
     where("contributorEmail", "==", email)
   );
@@ -173,7 +180,8 @@ export const createContribution = async (
   if (!db) {
     throw new Error("Firestore no está inicializado");
   }
-  const docRef = await addDoc(collection(db, "contributions"), {
+  const firestore = db;
+  const docRef = await addDoc(collection(firestore, "contributions"), {
     ...contribution,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -188,7 +196,8 @@ export const updateContribution = async (
   if (!db) {
     throw new Error("Firestore no está inicializado");
   }
-  const docRef = doc(db, "contributions", id);
+  const firestore = db;
+  const docRef = doc(firestore, "contributions", id);
   await updateDoc(docRef, {
     ...updates,
     updatedAt: serverTimestamp(),
