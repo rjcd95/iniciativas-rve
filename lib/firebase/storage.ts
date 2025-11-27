@@ -6,6 +6,9 @@ export const uploadPhoto = async (
   initiativeId: string,
   index: number
 ): Promise<string> => {
+  if (!storage) {
+    throw new Error("Firebase Storage no está inicializado");
+  }
   // Compress image if needed (basic approach)
   const compressedFile = await compressImage(file);
   
@@ -30,6 +33,9 @@ export const uploadMultiplePhotos = async (
 };
 
 export const deletePhoto = async (url: string): Promise<void> => {
+  if (!storage) {
+    throw new Error("Firebase Storage no está inicializado");
+  }
   const storageRef = ref(storage, url);
   await deleteObject(storageRef);
 };
