@@ -20,6 +20,9 @@ export const getInitiatives = async (filters?: {
   status?: "active" | "completed";
   createdBy?: string;
 }): Promise<Initiative[]> => {
+  if (!db) {
+    throw new Error("Firestore no está inicializado");
+  }
   let q = query(collection(db, "initiatives"), orderBy("createdAt", "desc"));
 
   if (filters?.status) {
@@ -40,6 +43,9 @@ export const getInitiatives = async (filters?: {
 };
 
 export const getInitiative = async (id: string): Promise<Initiative | null> => {
+  if (!db) {
+    throw new Error("Firestore no está inicializado");
+  }
   const docRef = doc(db, "initiatives", id);
   const docSnap = await getDoc(docRef);
 
@@ -58,6 +64,9 @@ export const getInitiative = async (id: string): Promise<Initiative | null> => {
 export const createInitiative = async (
   initiative: Omit<Initiative, "id" | "createdAt" | "updatedAt">
 ): Promise<string> => {
+  if (!db) {
+    throw new Error("Firestore no está inicializado");
+  }
   const docRef = await addDoc(collection(db, "initiatives"), {
     ...initiative,
     createdAt: serverTimestamp(),
@@ -70,6 +79,9 @@ export const updateInitiative = async (
   id: string,
   updates: Partial<Initiative>
 ): Promise<void> => {
+  if (!db) {
+    throw new Error("Firestore no está inicializado");
+  }
   const docRef = doc(db, "initiatives", id);
   await updateDoc(docRef, {
     ...updates,
@@ -78,6 +90,9 @@ export const updateInitiative = async (
 };
 
 export const deleteInitiative = async (id: string): Promise<void> => {
+  if (!db) {
+    throw new Error("Firestore no está inicializado");
+  }
   await deleteDoc(doc(db, "initiatives", id));
 };
 
@@ -129,6 +144,9 @@ export const getUserContribution = async (
   initiativeId: string,
   email: string
 ): Promise<Contribution | null> => {
+  if (!db) {
+    throw new Error("Firestore no está inicializado");
+  }
   const q = query(
     collection(db, "contributions"),
     where("initiativeId", "==", initiativeId),
@@ -152,6 +170,9 @@ export const getUserContribution = async (
 export const createContribution = async (
   contribution: Omit<Contribution, "id" | "createdAt" | "updatedAt">
 ): Promise<string> => {
+  if (!db) {
+    throw new Error("Firestore no está inicializado");
+  }
   const docRef = await addDoc(collection(db, "contributions"), {
     ...contribution,
     createdAt: serverTimestamp(),
@@ -164,6 +185,9 @@ export const updateContribution = async (
   id: string,
   updates: Partial<Contribution>
 ): Promise<void> => {
+  if (!db) {
+    throw new Error("Firestore no está inicializado");
+  }
   const docRef = doc(db, "contributions", id);
   await updateDoc(docRef, {
     ...updates,
