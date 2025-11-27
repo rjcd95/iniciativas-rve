@@ -22,6 +22,11 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
@@ -34,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
   const handleSignIn = async (email: string) => {
     await signInWithEmail(email);
